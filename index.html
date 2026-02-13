@@ -9,7 +9,6 @@
   :root {
     --bg-primary: #08080c;
     --bg-secondary: #0e0e14;
-    --bg-card: rgba(255,255,255,0.03);
     --border-subtle: rgba(255,255,255,0.06);
     --text-primary: #f0f0f5;
     --text-secondary: rgba(255,255,255,0.5);
@@ -22,13 +21,10 @@
     --accent-cyan: #06b6d4;
     --accent-yellow: #eab308;
     --accent-pink: #ec4899;
-    --accent-emerald: #10b981;
     --grid-color: rgba(255,255,255,0.04);
     --axis-color: rgba(255,255,255,0.12);
   }
-
   * { margin: 0; padding: 0; box-sizing: border-box; }
-
   body {
     background: var(--bg-primary);
     color: var(--text-primary);
@@ -41,8 +37,6 @@
     padding: 40px 20px;
     overflow-x: hidden;
   }
-
-  /* Subtle background texture */
   body::before {
     content: '';
     position: fixed;
@@ -55,362 +49,154 @@
     pointer-events: none;
     z-index: 0;
   }
-
-  .container {
-    position: relative;
-    z-index: 1;
-    width: 100%;
-    max-width: 880px;
+  .container { position: relative; z-index: 1; width: 100%; max-width: 880px; }
+  .lang-toggle {
+    position: fixed; top: 20px; right: 20px; z-index: 100;
+    display: flex; align-items: center;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 8px; padding: 4px;
+    backdrop-filter: blur(12px); gap: 2px;
   }
-
-  /* Header */
-  .header {
-    text-align: center;
-    margin-bottom: 48px;
+  .lang-btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; font-weight: 600; letter-spacing: 1px;
+    padding: 6px 14px; border: none; border-radius: 6px;
+    cursor: pointer; transition: all 0.25s ease;
+    background: transparent; color: var(--text-muted);
   }
-
+  .lang-btn.active {
+    background: rgba(255,255,255,0.1);
+    color: var(--text-primary);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+  }
+  .lang-btn:hover:not(.active) { color: var(--text-secondary); }
+  .header { text-align: center; margin-bottom: 48px; }
   .header .label {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    margin-bottom: 16px;
-    display: block;
+    font-size: 11px; font-weight: 500; letter-spacing: 3px;
+    text-transform: uppercase; color: var(--text-muted);
+    margin-bottom: 16px; display: block;
   }
-
   .header h1 {
-    font-size: clamp(28px, 4vw, 44px);
-    font-weight: 800;
-    letter-spacing: -1.5px;
-    line-height: 1.1;
+    font-size: clamp(28px, 4vw, 44px); font-weight: 800;
+    letter-spacing: -1.5px; line-height: 1.1;
     background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.6) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
   }
-
   .header .subtitle {
-    font-size: 15px;
-    color: var(--text-secondary);
-    margin-top: 12px;
-    font-weight: 300;
-    letter-spacing: 0.3px;
+    font-size: 15px; color: var(--text-secondary);
+    margin-top: 12px; font-weight: 300; letter-spacing: 0.3px;
   }
-
-  /* Chart Area */
-  .chart-wrapper {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 1;
-    max-width: 800px;
-    margin: 0 auto;
-  }
-
+  .chart-wrapper { position: relative; width: 100%; aspect-ratio: 1; max-width: 800px; margin: 0 auto; }
   .chart-grid {
-    position: absolute;
-    inset: 60px;
-    border: 1px solid var(--axis-color);
-    border-radius: 4px;
-    overflow: visible;
+    position: absolute; inset: 60px;
+    border: 1px solid var(--axis-color); border-radius: 4px; overflow: visible;
   }
-
-  /* Grid lines */
-  .chart-grid::before,
-  .chart-grid::after {
-    content: '';
-    position: absolute;
-  }
-
-  .chart-grid::before {
-    left: 50%;
-    top: 0;
-    bottom: 0;
-    width: 1px;
-    background: var(--axis-color);
-  }
-
-  .chart-grid::after {
-    top: 50%;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: var(--axis-color);
-  }
-
-  /* Subtle inner grid */
+  .chart-grid::before, .chart-grid::after { content: ''; position: absolute; }
+  .chart-grid::before { left: 50%; top: 0; bottom: 0; width: 1px; background: var(--axis-color); }
+  .chart-grid::after { top: 50%; left: 0; right: 0; height: 1px; background: var(--axis-color); }
   .inner-grid {
-    position: absolute;
-    inset: 0;
-    background: 
-      linear-gradient(90deg, var(--grid-color) 1px, transparent 1px),
-      linear-gradient(0deg, var(--grid-color) 1px, transparent 1px);
+    position: absolute; inset: 0;
+    background: linear-gradient(90deg, var(--grid-color) 1px, transparent 1px), linear-gradient(0deg, var(--grid-color) 1px, transparent 1px);
     background-size: 25% 25%;
   }
-
-  /* Quadrant zones */
-  .quadrant {
-    position: absolute;
-    width: 50%;
-    height: 50%;
-    opacity: 0.5;
-    transition: opacity 0.4s ease;
-  }
-
+  .quadrant { position: absolute; width: 50%; height: 50%; opacity: 0.5; transition: opacity 0.4s ease; }
   .quadrant:hover { opacity: 0.85; }
-
   .q-tl { top: 0; left: 0; background: radial-gradient(ellipse at 30% 30%, rgba(168,85,247,0.08) 0%, transparent 70%); }
   .q-tr { top: 0; right: 0; background: radial-gradient(ellipse at 70% 30%, rgba(59,130,246,0.08) 0%, transparent 70%); }
   .q-bl { bottom: 0; left: 0; background: radial-gradient(ellipse at 30% 70%, rgba(239,68,68,0.08) 0%, transparent 70%); }
   .q-br { bottom: 0; right: 0; background: radial-gradient(ellipse at 70% 70%, rgba(249,115,22,0.06) 0%, transparent 70%); }
-
-  /* Axis Labels */
   .axis-label {
-    position: absolute;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 2.5px;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    white-space: nowrap;
+    position: absolute; font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; font-weight: 600; letter-spacing: 2.5px;
+    text-transform: uppercase; color: var(--text-muted); white-space: nowrap;
   }
-
   .axis-top { top: 30px; left: 50%; transform: translateX(-50%); }
   .axis-bottom { bottom: 30px; left: 50%; transform: translateX(-50%); }
   .axis-left { left: 0; top: 50%; transform: translateY(-50%) rotate(-90deg); transform-origin: center; }
   .axis-right { right: 0; top: 50%; transform: translateY(-50%) rotate(90deg); transform-origin: center; }
-
   .axis-label .positive { color: rgba(255,255,255,0.45); }
   .axis-label .negative { color: rgba(255,255,255,0.2); }
-
-  /* Corner Labels */
   .corner-label {
-    position: absolute;
-    font-family: 'Outfit', sans-serif;
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    padding: 4px 10px;
-    border-radius: 3px;
-    z-index: 5;
+    position: absolute; font-family: 'Outfit', sans-serif;
+    font-size: 9px; font-weight: 700; letter-spacing: 2px;
+    text-transform: uppercase; padding: 4px 10px; border-radius: 3px; z-index: 5;
   }
-
-  .corner-tl { 
-    top: 64px; left: 64px; 
-    color: var(--accent-purple); 
-    background: rgba(168,85,247,0.08);
-    border: 1px solid rgba(168,85,247,0.15);
-  }
-  .corner-tr { 
-    top: 64px; right: 64px; 
-    color: var(--accent-blue); 
-    background: rgba(59,130,246,0.08);
-    border: 1px solid rgba(59,130,246,0.15);
-  }
-  .corner-bl { 
-    bottom: 64px; left: 64px; 
-    color: var(--accent-red); 
-    background: rgba(239,68,68,0.08);
-    border: 1px solid rgba(239,68,68,0.15);
-  }
-  .corner-br { 
-    bottom: 64px; right: 64px; 
-    color: var(--accent-orange); 
-    background: rgba(249,115,22,0.08);
-    border: 1px solid rgba(249,115,22,0.15);
-  }
-
-  /* Archetype Nodes */
+  .corner-tl { top: 64px; left: 64px; color: var(--accent-purple); background: rgba(168,85,247,0.08); border: 1px solid rgba(168,85,247,0.15); }
+  .corner-tr { top: 64px; right: 64px; color: var(--accent-blue); background: rgba(59,130,246,0.08); border: 1px solid rgba(59,130,246,0.15); }
+  .corner-bl { bottom: 64px; left: 64px; color: var(--accent-red); background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.15); }
+  .corner-br { bottom: 64px; right: 64px; color: var(--accent-orange); background: rgba(249,115,22,0.08); border: 1px solid rgba(249,115,22,0.15); }
   .node {
-    position: absolute;
-    transform: translate(-50%, -50%);
-    z-index: 10;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: absolute; transform: translate(-50%, -50%); z-index: 10;
+    cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
-
-  .node:hover {
-    z-index: 20;
-    transform: translate(-50%, -50%) scale(1.08);
-  }
-
-  .node-inner {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
-  }
-
-  .node-dot {
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    position: relative;
-    flex-shrink: 0;
-  }
-
+  .node:hover { z-index: 20; transform: translate(-50%, -50%) scale(1.08); }
+  .node-inner { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .node-dot { width: 14px; height: 14px; border-radius: 50%; position: relative; flex-shrink: 0; }
   .node-dot::before {
-    content: '';
-    position: absolute;
-    inset: -4px;
-    border-radius: 50%;
-    border: 1.5px solid currentColor;
-    opacity: 0.3;
-    transition: opacity 0.3s, inset 0.3s;
+    content: ''; position: absolute; inset: -4px; border-radius: 50%;
+    border: 1.5px solid currentColor; opacity: 0.3; transition: opacity 0.3s, inset 0.3s;
   }
-
-  .node:hover .node-dot::before {
-    opacity: 0.6;
-    inset: -7px;
-  }
-
+  .node:hover .node-dot::before { opacity: 0.6; inset: -7px; }
   .node-dot::after {
-    content: '';
-    position: absolute;
-    inset: -16px;
-    border-radius: 50%;
+    content: ''; position: absolute; inset: -16px; border-radius: 50%;
     background: radial-gradient(circle, currentColor 0%, transparent 70%);
-    opacity: 0.08;
-    transition: opacity 0.3s;
+    opacity: 0.08; transition: opacity 0.3s;
   }
-
-  .node:hover .node-dot::after {
-    opacity: 0.15;
-  }
-
+  .node:hover .node-dot::after { opacity: 0.15; }
   .node-label {
-    font-family: 'Outfit', sans-serif;
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.3px;
-    text-align: center;
-    line-height: 1.3;
-    white-space: nowrap;
-    padding: 4px 10px;
-    border-radius: 4px;
-    background: rgba(0,0,0,0.7);
-    backdrop-filter: blur(8px);
-    border: 1px solid rgba(255,255,255,0.06);
-    transition: all 0.3s ease;
+    font-family: 'Outfit', sans-serif; font-size: 12px; font-weight: 600;
+    letter-spacing: 0.3px; text-align: center; line-height: 1.3; white-space: nowrap;
+    padding: 4px 10px; border-radius: 4px; background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.06); transition: all 0.3s ease;
   }
-
-  .node:hover .node-label {
-    background: rgba(0,0,0,0.85);
-    border-color: rgba(255,255,255,0.12);
-  }
-
+  .node:hover .node-label { background: rgba(0,0,0,0.85); border-color: rgba(255,255,255,0.12); }
   .node-desc {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 8.5px;
-    font-weight: 400;
-    color: var(--text-secondary);
-    text-align: center;
-    max-width: 120px;
-    line-height: 1.4;
-    opacity: 0;
-    transform: translateY(-4px);
-    transition: all 0.3s ease;
-    padding: 0 4px;
+    font-family: 'JetBrains Mono', monospace; font-size: 8.5px; font-weight: 400;
+    color: var(--text-secondary); text-align: center; max-width: 130px; line-height: 1.4;
+    opacity: 0; transform: translateY(-4px); transition: all 0.3s ease; padding: 0 4px;
   }
-
-  .node:hover .node-desc {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  /* Color classes */
+  .node:hover .node-desc { opacity: 1; transform: translateY(0); }
   .c-blue .node-dot { background: var(--accent-blue); color: var(--accent-blue); }
   .c-blue .node-label { color: var(--accent-blue); }
-
   .c-green .node-dot { background: var(--accent-green); color: var(--accent-green); }
   .c-green .node-label { color: var(--accent-green); }
-
   .c-purple .node-dot { background: var(--accent-purple); color: var(--accent-purple); }
   .c-purple .node-label { color: var(--accent-purple); }
-
   .c-cyan .node-dot { background: var(--accent-cyan); color: var(--accent-cyan); }
   .c-cyan .node-label { color: var(--accent-cyan); }
-
   .c-red .node-dot { background: var(--accent-red); color: var(--accent-red); }
   .c-red .node-label { color: var(--accent-red); }
-
   .c-orange .node-dot { background: var(--accent-orange); color: var(--accent-orange); }
   .c-orange .node-label { color: var(--accent-orange); }
-
   .c-pink .node-dot { background: var(--accent-pink); color: var(--accent-pink); }
   .c-pink .node-label { color: var(--accent-pink); }
-
   .c-yellow .node-dot { background: var(--accent-yellow); color: var(--accent-yellow); }
   .c-yellow .node-label { color: var(--accent-yellow); }
-
   .c-muted .node-dot { background: rgba(255,255,255,0.3); color: rgba(255,255,255,0.3); }
   .c-muted .node-label { color: var(--text-secondary); }
-
-  /* NPC special treatment */
-  .node-npc .node-dot {
-    width: 10px;
-    height: 10px;
-    background: rgba(255,255,255,0.2);
-    color: rgba(255,255,255,0.2);
-  }
-  .node-npc .node-label {
-    font-size: 10px;
-    color: var(--text-muted);
-    font-weight: 500;
-    border-color: rgba(255,255,255,0.04);
-  }
-
-  /* Legend */
+  .node-npc .node-dot { width: 10px; height: 10px; background: rgba(255,255,255,0.2); color: rgba(255,255,255,0.2); }
+  .node-npc .node-label { font-size: 10px; color: var(--text-muted); font-weight: 500; border-color: rgba(255,255,255,0.04); }
   .legend {
-    margin-top: 48px;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 20px 32px;
-    padding: 20px 24px;
-    border-top: 1px solid var(--border-subtle);
+    margin-top: 48px; display: flex; flex-wrap: wrap; justify-content: center;
+    gap: 20px 32px; padding: 20px 24px; border-top: 1px solid var(--border-subtle);
   }
-
-  .legend-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 11px;
-    color: var(--text-secondary);
-    font-weight: 400;
-  }
-
-  .legend-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
-
-  /* Footer */
-  .footer {
-    margin-top: 36px;
-    text-align: center;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
-    color: var(--text-muted);
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-  }
-
-  /* Entry animations */
+  .legend-item { display: flex; align-items: center; gap: 8px; font-size: 11px; color: var(--text-secondary); font-weight: 400; }
+  .legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .footer { margin-top: 36px; text-align: center; font-size: 11px; color: var(--text-muted); line-height: 1.8; }
+  .footer .made-by { font-family: 'Outfit', sans-serif; font-weight: 400; color: var(--text-secondary); letter-spacing: 0.2px; }
+  .footer .made-by a { color: var(--text-primary); text-decoration: none; font-weight: 600; transition: color 0.2s; }
+  .footer .made-by a:hover { color: var(--accent-cyan); }
+  .footer .inspired { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1px; color: var(--text-muted); margin-top: 4px; }
+  .footer .inspired a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+  .footer .inspired a:hover { color: var(--text-secondary); }
+  .footer .separator { margin: 0 6px; opacity: 0.4; }
   @keyframes fadeInUp {
     from { opacity: 0; transform: translate(-50%, calc(-50% + 12px)); }
     to { opacity: 1; transform: translate(-50%, -50%); }
   }
-
-  .node {
-    animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) backwards;
-  }
-
+  .node { animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) backwards; }
   .node:nth-child(1) { animation-delay: 0.1s; }
   .node:nth-child(2) { animation-delay: 0.15s; }
   .node:nth-child(3) { animation-delay: 0.2s; }
@@ -420,17 +206,10 @@
   .node:nth-child(7) { animation-delay: 0.4s; }
   .node:nth-child(8) { animation-delay: 0.45s; }
   .node:nth-child(9) { animation-delay: 0.5s; }
-
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
   .header { animation: fadeIn 0.8s ease backwards; }
   .chart-grid { animation: fadeIn 1s ease 0.05s backwards; }
   .legend { animation: fadeIn 0.6s ease 0.6s backwards; }
-
-  /* Responsive */
   @media (max-width: 600px) {
     .chart-wrapper { aspect-ratio: auto; height: 500px; }
     .chart-grid { inset: 44px; }
@@ -443,142 +222,134 @@
     .node-label { font-size: 10px; }
     .axis-top { top: 18px; }
     .axis-bottom { bottom: 18px; }
+    .lang-toggle { top: 12px; right: 12px; }
   }
 </style>
 </head>
 <body>
-
+<div class="lang-toggle">
+  <button class="lang-btn active" id="btn-es" onclick="setLang('es')">ES</button>
+  <button class="lang-btn" id="btn-en" onclick="setLang('en')">EN</button>
+</div>
 <div class="container">
   <header class="header">
-    <span class="label">Framework de Evaluación Profesional</span>
+    <span class="label" data-es="Framework de Evaluación Profesional" data-en="Professional Assessment Framework"></span>
     <h1>IT Professional Alignment Chart</h1>
-    <p class="subtitle">Mapeo de arquetipos según juicio, inteligencia, uso de IA y actitud laboral</p>
+    <p class="subtitle" data-es="Mapeo de arquetipos según juicio, inteligencia, uso de IA y actitud laboral" data-en="Archetype mapping across judgment, intelligence, AI usage and work ethic"></p>
   </header>
-
   <div class="chart-wrapper">
-    <!-- Axis Labels -->
-    <div class="axis-label axis-top"><span class="positive">✦ Buen Juicio</span></div>
-    <div class="axis-label axis-bottom"><span class="negative">✦ Mal Juicio</span></div>
-    <div class="axis-label axis-left"><span class="positive">Usa IA ←</span></div>
-    <div class="axis-label axis-right"><span class="positive">→ No usa IA</span></div>
-
-    <!-- Corner Labels -->
-    <div class="corner-label corner-tl">⚡ Hiperactivo</div>
-    <div class="corner-label corner-tr">🧠 High IQ</div>
-    <div class="corner-label corner-bl">📉 Low IQ</div>
-    <div class="corner-label corner-br">🦥 Lazy</div>
-
-    <!-- Chart Grid -->
+    <div class="axis-label axis-top"><span class="positive" data-es="✦ Buen Juicio" data-en="✦ Good Judgment"></span></div>
+    <div class="axis-label axis-bottom"><span class="negative" data-es="✦ Mal Juicio" data-en="✦ Bad Judgment"></span></div>
+    <div class="axis-label axis-left"><span class="positive" data-es="Usa IA ←" data-en="Uses AI ←"></span></div>
+    <div class="axis-label axis-right"><span class="positive" data-es="→ No usa IA" data-en="→ Doesn't use AI"></span></div>
+    <div class="corner-label corner-tl" data-es="⚡ Hiperactivo" data-en="⚡ Hyperactive"></div>
+    <div class="corner-label corner-tr" data-es="🧠 High IQ" data-en="🧠 High IQ"></div>
+    <div class="corner-label corner-bl" data-es="📉 Low IQ" data-en="📉 Low IQ"></div>
+    <div class="corner-label corner-br" data-es="🦥 Lazy" data-en="🦥 Lazy"></div>
     <div class="chart-grid">
       <div class="inner-grid"></div>
-
-      <!-- Quadrant zones -->
       <div class="quadrant q-tl"></div>
       <div class="quadrant q-tr"></div>
       <div class="quadrant q-bl"></div>
       <div class="quadrant q-br"></div>
-
-      <!-- NODES — positioned with % inside the grid -->
-      <!-- Coordinates: left = 0% (Uses AI) to 100% (No AI), top = 0% (Good Judgment) to 100% (Bad Judgment) -->
-
-      <!-- Linus Torvalds — top right: High IQ, Good Judgment, No AI -->
       <div class="node c-blue" style="left: 86%; top: 12%;">
         <div class="node-inner">
           <div class="node-dot"></div>
           <div class="node-label">Linus Torvalds</div>
-          <div class="node-desc">Alto IQ · No necesita IA · Criterio sólido</div>
+          <div class="node-desc" data-es="Alto IQ · No necesita IA · Criterio sólido" data-en="High IQ · Doesn't need AI · Solid judgment"></div>
         </div>
       </div>
-
-      <!-- Twitter Autist — upper left: Hyperactive, Uses AI, Good Judgment -->
       <div class="node c-purple" style="left: 13%; top: 14%;">
         <div class="node-inner">
           <div class="node-dot"></div>
           <div class="node-label">Twitter Autist</div>
-          <div class="node-desc">Hiperactivo · Power user de IA · Buen criterio</div>
+          <div class="node-desc" data-es="Hiperactivo · Power user de IA · Buen criterio" data-en="Hyperactive · AI power user · Good judgment"></div>
         </div>
       </div>
-
-      <!-- Turbo Brains — center-upper-left -->
       <div class="node c-cyan" style="left: 30%; top: 30%;">
         <div class="node-inner">
           <div class="node-dot"></div>
           <div class="node-label">Turbo Brains</div>
-          <div class="node-desc">Usa IA con criterio · Productividad alta</div>
+          <div class="node-desc" data-es="Usa IA con criterio · Productividad alta" data-en="Uses AI with judgment · High productivity"></div>
         </div>
       </div>
-
-      <!-- Steady Hands — center-upper-right -->
       <div class="node c-green" style="left: 66%; top: 32%;">
         <div class="node-inner">
           <div class="node-dot"></div>
           <div class="node-label">Steady Hands</div>
-          <div class="node-desc">Criterio sólido · Métodos tradicionales</div>
+          <div class="node-desc" data-es="Criterio sólido · Métodos tradicionales" data-en="Solid judgment · Traditional methods"></div>
         </div>
       </div>
-
-      <!-- NPC — dead center -->
       <div class="node node-npc c-muted" style="left: 50%; top: 50%;">
         <div class="node-inner">
           <div class="node-dot"></div>
           <div class="node-label">NPC</div>
-          <div class="node-desc">Mediano en todo · No destaca</div>
+          <div class="node-desc" data-es="Mediano en todo · No destaca" data-en="Average at everything · Unremarkable"></div>
         </div>
       </div>
-
-      <!-- Slop Cannon — center-lower-left -->
       <div class="node c-pink" style="left: 28%; top: 66%;">
         <div class="node-inner">
           <div class="node-dot"></div>
           <div class="node-label">Slop Cannon</div>
-          <div class="node-desc">Genera basura con IA · Sin filtro</div>
+          <div class="node-desc" data-es="Genera basura con IA · Sin filtro" data-en="Generates AI garbage · No filter"></div>
         </div>
       </div>
-
-      <!-- Dead Weight — center-lower-right -->
       <div class="node c-orange" style="left: 62%; top: 64%;">
         <div class="node-inner">
           <div class="node-dot"></div>
           <div class="node-label">Dead Weight</div>
-          <div class="node-desc">Mal juicio · Aporta poco</div>
+          <div class="node-desc" data-es="Mal juicio · Aporta poco" data-en="Bad judgment · Low contribution"></div>
         </div>
       </div>
-
-      <!-- Prompt Goblin — bottom left -->
       <div class="node c-red" style="left: 14%; top: 84%;">
         <div class="node-inner">
           <div class="node-dot"></div>
           <div class="node-label">Prompt Goblin</div>
-          <div class="node-desc">Cree que promptear es trabajar</div>
+          <div class="node-desc" data-es="Cree que promptear es trabajar" data-en="Thinks prompting is working"></div>
         </div>
       </div>
-
-      <!-- Office Furniture — bottom right -->
       <div class="node c-yellow" style="left: 82%; top: 78%;">
         <div class="node-inner">
           <div class="node-dot"></div>
           <div class="node-label">Office Furniture</div>
-          <div class="node-desc">Parte del mobiliario · Calentando silla</div>
+          <div class="node-desc" data-es="Parte del mobiliario · Calentando silla" data-en="Part of the furniture · Warming a chair"></div>
         </div>
       </div>
-
-    </div><!-- /chart-grid -->
-  </div><!-- /chart-wrapper -->
-
-  <div class="legend">
-    <div class="legend-item"><div class="legend-dot" style="background:var(--accent-blue)"></div>Élite Técnica</div>
-    <div class="legend-item"><div class="legend-dot" style="background:var(--accent-purple)"></div>Hiperactivo Capaz</div>
-    <div class="legend-item"><div class="legend-dot" style="background:var(--accent-cyan)"></div>IA + Criterio</div>
-    <div class="legend-item"><div class="legend-dot" style="background:var(--accent-green)"></div>Clásico Fiable</div>
-    <div class="legend-item"><div class="legend-dot" style="background:rgba(255,255,255,0.3)"></div>Neutro</div>
-    <div class="legend-item"><div class="legend-dot" style="background:var(--accent-pink)"></div>IA sin Filtro</div>
-    <div class="legend-item"><div class="legend-dot" style="background:var(--accent-orange)"></div>Bajo Rendimiento</div>
-    <div class="legend-item"><div class="legend-dot" style="background:var(--accent-red)"></div>Peligro</div>
-    <div class="legend-item"><div class="legend-dot" style="background:var(--accent-yellow)"></div>Decorativo</div>
+    </div>
   </div>
-
-  <div class="footer">Hecho por @naifenoir & Claude Code × Inspirado por: @danhockenmaier & @Recuenco · Alignment Framework v2.0</div>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent-blue)"></div><span data-es="Élite Técnica" data-en="Technical Elite"></span></div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent-purple)"></div><span data-es="Hiperactivo Capaz" data-en="Capable Hyperactive"></span></div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent-cyan)"></div><span data-es="IA + Criterio" data-en="AI + Judgment"></span></div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent-green)"></div><span data-es="Clásico Fiable" data-en="Reliable Classic"></span></div>
+    <div class="legend-item"><div class="legend-dot" style="background:rgba(255,255,255,0.3)"></div><span data-es="Neutro" data-en="Neutral"></span></div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent-pink)"></div><span data-es="IA sin Filtro" data-en="Unfiltered AI"></span></div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent-orange)"></div><span data-es="Bajo Rendimiento" data-en="Underperformer"></span></div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent-red)"></div><span data-es="Peligro" data-en="Hazard"></span></div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent-yellow)"></div><span data-es="Decorativo" data-en="Decorative"></span></div>
+  </div>
+  <div class="footer">
+    <div class="made-by" data-es="Hecho por <a href='https://x.com/naifenoir' target='_blank'>@naifenoir</a> & <a href='https://claude.ai' target='_blank'>Claude Code</a>" data-en="Made by <a href='https://x.com/naifenoir' target='_blank'>@naifenoir</a> & <a href='https://claude.ai' target='_blank'>Claude Code</a>"></div>
+    <div class="inspired" data-es="Inspirado por <a href='https://x.com/danhockenmaier' target='_blank'>@danhockenmaier</a> <span class='separator'>×</span> <a href='https://x.com/Recuenco' target='_blank'>@Recuenco</a> · Alignment Framework v2.0" data-en="Inspired by <a href='https://x.com/danhockenmaier' target='_blank'>@danhockenmaier</a> <span class='separator'>×</span> <a href='https://x.com/Recuenco' target='_blank'>@Recuenco</a> · Alignment Framework v2.0"></div>
+  </div>
 </div>
-
+<script>
+  let currentLang = 'es';
+  function setLang(lang) {
+    currentLang = lang;
+    document.documentElement.lang = lang;
+    document.getElementById('btn-es').classList.toggle('active', lang === 'es');
+    document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+    document.querySelectorAll('[data-es][data-en]').forEach(function(el) {
+      var text = el.getAttribute('data-' + lang);
+      if (text.indexOf('<a ') !== -1 || text.indexOf('<span') !== -1) {
+        el.innerHTML = text;
+      } else {
+        el.textContent = text;
+      }
+    });
+  }
+  setLang('es');
+</script>
 </body>
 </html>
