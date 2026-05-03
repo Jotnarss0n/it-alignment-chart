@@ -1,6 +1,6 @@
 # IT Professional Alignment Chart
 
-**[Ver chart](https://Jotnarss0n.github.io/it-alignment-chart/)**
+**[Ver chart](https://lacrimae0rerum.github.io/it-alignment-chart/)**
 
 Interactive alignment chart that maps IT professional archetypes across four dimensions:
 
